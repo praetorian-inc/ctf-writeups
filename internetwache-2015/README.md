@@ -1,8 +1,8 @@
-# Relevant blog post
+# Read more
 
-BLOG POST HERE
+[Internetwache RE60 Writeup: Symbolic Execution Tramples CTF Challenge](https://www.praetorian.com/blog/internetwache-re60-writeup-symbolic-execution-tramples-ctf-challenge)
 
-# Code
+# Solution
 
 ```python
 import angr
