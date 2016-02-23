@@ -1,6 +1,6 @@
-# Read more
+I am always looking for problems that symbolic execution could be applied to in the capture the flag space. This past weekend, this challenge was met during the Internetwache CTF for its RE60 problem. Below I describe the application of symbolic execution to solve the challenge without much knowledge of the inner workings of the binary itself.
 
-[Internetwache RE60 Writeup: Symbolic Execution Tramples CTF Challenge](https://www.praetorian.com/blog/internetwache-re60-writeup-symbolic-execution-tramples-ctf-challenge)
+Read more: [Internetwache RE60 Writeup: Symbolic Execution Tramples CTF Challenge](https://www.praetorian.com/blog/internetwache-re60-writeup-symbolic-execution-tramples-ctf-challenge)
 
 # Solution
 
