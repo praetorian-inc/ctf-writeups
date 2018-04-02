@@ -79,8 +79,8 @@ a923b000
 000000b0: 494e 4720 2e2e 2e0a                      ING ....
 ```
 
-![](images/window_of_opportunity_encrypted_blob.png)
-![](images/window_of_opportunity_decrypt.png)
+![Encrypted Blob](images/window_of_opportunity_encrypted_blob.png)
+![Decrypt loop](images/window_of_opportunity_decrypt.png)
 
 After some more fiddling around, I figured out that the 32-bit "key"
 I recovered was inverted and byte reversed - giving the _real_ key
@@ -114,7 +114,7 @@ while int(time.time()+4) % 0x10000 not in valid_times:
     time.sleep(.5)
 ```
 
-![](images/window_of_opportunity_keygen.png)
+![Keygen](images/window_of_opportunity_keygen.png)
 
 With this script in hand, I quite simply ran it, and when it
 exited immediately connected to the server for a flag.
@@ -124,9 +124,26 @@ $ ./windowofopportunity.py ; nc chal1.swampctf.com 1313
 ...
 ```
 
-![](images/window_of_opportunity_solution.png)
+![Solution](images/window_of_opportunity_solution.png)
 
 ## REV - Pilgrim
+
+![](images/pilgrim_description.png)
+
+This was another reversing problem. Doing some quick reverse engineering
+the binary showed several double constants (shown below) in the binary which were used
+to fill in what look like some arrays. Testing the binary on the server
+showed that these contants are used in the "bias" array and produce different
+output (as shown below).
+
+![Constants](images/pilgrim_constants.png)
+![Testing constants](images/pilgrim_testing.png)
+
+With a little trial and error, I found that each bias value contributed
+to one letter of the "speak" text. Getting these to spell out flag revealed
+the answer below.
+
+![Solution](images/pilgrim_solution.png)
 
 ## REV - Chicken Chaser
 
