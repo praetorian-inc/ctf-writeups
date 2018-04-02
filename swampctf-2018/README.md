@@ -197,6 +197,65 @@ plt.show()
 
 ## MISC - Orb of Light 3: Disjunction
 
+![Description](images/orb3_description.png)
+
+This challenge started out with 6400 10x10 pixel images. Each was in a numbered
+folder and had a filename of the form fragment-0nnnn.png. Sorting these by the
+filename and combining them into one image showed a picture with the flag in it.
+The most time consuming part of this problem was taking all the individual 
+images and combining them into one. There might have been a better way to do this,
+but I decided to use the python png library. The script and resulting combined
+image are shown below.
+
+```python
+import png
+import os
+
+files = []
+shad = './.shadow_fragments/'
+dirs = os.listdir(shad)
+for d in dirs:
+    p = os.path.join(shad,d)
+    for f in os.listdir(p):
+        #print(os.path.join(p,f))
+        files.append((f,os.path.join(p,f)))
+files.sort()
+files = [p for (f,p) in files]
+
+ncols = 80
+nrows = 80
+
+full_hash = {}
+
+for c in range(ncols):
+    for r in range(nrows):
+        p = png.Reader(files[80*r+c])
+        if r == 0 and c == 0: print(p.read()[3])
+        m = p.read()[2]
+        palette = p.read()[3]['palette']
+        for r0,row in enumerate(m):
+            if r == 0 and c == 0:
+                print(row)
+            for c0,v in enumerate(row):
+                full_hash[10*c+c0,10*r+r0] = palette[v]
+
+all_rows = []
+for r in range(10*nrows):
+    row = []
+    for c in range(10*ncols):
+        row = row + list(full_hash[c,r])
+    #row = [full_hash[c,r] for c in range(10*ncols)]
+    all_rows.append(row)
+
+f = open('orb3.png','wb')
+w = png.Writer(10*ncols,10*nrows)
+w.write(f,all_rows)
+f.flush()
+f.close()
+```
+
+![Combined Image](images/orb3.png)
+
 ## CRYPTO - Orb of Light 1: Secret
 
 ## CRYPTO - Locked Dungeon
