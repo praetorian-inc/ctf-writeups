@@ -153,6 +153,48 @@ the answer below.
 
 ## MISC - Orb of Light 2: Save Cormyr
 
+![Description](images/orb2_description.png)
+
+This challenge was slightly confusing, but after re-reading the hint several
+times, it became obvious that tuple values in the provided file were to be used
+for a trajectory computation. Using google and finding the forumla for a trajectory
+showed that the endpoint for each tuple trajectory was in a confined spot. Plotting
+these values revealed the flag. A script to compute (x,y) values from each tuple
+and the plotted (x,y) values are shown below.
+
+```python
+import pickle
+import matplotlib.pyplot as plt
+
+pages = pickle.load(open('./Orb_of_Light_p2_SaveCormyr/page_of_numbers.p'))
+examples = pickle.load(open('./Orb_of_Light_p2_SaveCormyr/examples.p'))
+
+def trajectory(coords):
+    (x,y,v,a,o) = coords
+    g = 9.80665
+    td = 2*v*math.sin(a)
+    d  = v**2 / g * math.sin(2 * a)
+    sx = round(y-math.sin(o)*d)
+    sy = round(x-math.cos(o)*d)
+    return sx, sy
+
+for val,ans in examples:
+    assert ans == trajectory(val)
+
+xarr = []
+yarr = []
+for val in pages:
+    x,y = trajectory(val)
+    #print(x,y)
+    xarr.append(-x)
+    yarr.append(y)
+
+plt.scatter(yarr,xarr,c='b')
+plt.show()
+```
+
+![Plot](images/orb2_plot_flag.png)
+
 ## MISC - Orb of Light 3: Disjunction
 
 ## CRYPTO - Orb of Light 1: Secret

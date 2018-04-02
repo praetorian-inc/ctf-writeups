@@ -1,0 +1,7 @@
+I apologize, I messed up.
+I made a typo in the formula.
+It made the physics WRONG.
+A factor of 2 was left out of the solution.
+I've added some more examples to verify.
+
+Hopefully it should be much easier now.
