@@ -8,7 +8,7 @@
 
 ## REV - Window of Opportunity
 
-[](images/window_of_opportunity_description.png)
+![Window of Opportunity Description](images/window_of_opportunity_description.png)
 
 ## REV - Pilgrim
 
