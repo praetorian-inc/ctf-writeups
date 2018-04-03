@@ -3,7 +3,7 @@
 [https://play.swampctf.com/](https://play.swampctf.com/)
 
 Solved Problems:
-* [REV - Dragon's Horde](#REV - Dragon's Horde)
+* [REV - Dragon's Horde](#REV---Dragons-Horde)
 * [REV - Journey](#REV - Journey)
 * [REV - Window of Opportunity](#REV - Window of Opportunity)
 * [REV - Pilgrim](#REV - Pilgrim)
