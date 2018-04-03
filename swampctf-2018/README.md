@@ -369,6 +369,96 @@ for i in range(100):
 
 ## CRYPTO - Locked Dungeon 2
 
+![Description](images/locked_dungeon2_description.png)
+
+Like the last challenge, a python script was provided [saved here](files/enter_the_dungeon2.py).
+This problem was split into two parts, so we'll tackle them one at a time.
+First, the server provides a CBC encrypted block with a fixed string
+somewhere in the block. The server then expects a block which it will
+decrypt, and if that decrypted block contains the string "get_modflag_md5"
+then we'll continue onto the next step. Given the mechanics of CBC encryption,
+we can assume the fixed string will be in the first block (if we're wrong just try again!)
+and XOR known values into the prior block (or IV) and test the new string.
+A sample script to do this action is shown below.
+
+```python
+s = socket.create_connection(('chal1.swampctf.com',1460))
+s.settimeout(1)
+enc_mod_flag = s.recv(1024).strip()
+print enc_mod_flag
+print s.recv(1024)
+count = 0
+for i in range(0,96,16):
+    send_data = [ch for ch in b64decode(enc_mod_flag)]
+    send_data[i+1] = chr(ord(send_data[i+1]) ^ ord('e') ^ ord('g'))
+    send_data[i+2] = chr(ord(send_data[i+2]) ^ ord('n') ^ ord('e'))
+    send_data[i+3] = chr(ord(send_data[i+3]) ^ ord('d') ^ ord('t'))
+    send_data[i+13] = chr(ord(send_data[i+13]) ^ ord('e') ^ ord('m'))
+    send_data[i+14] = chr(ord(send_data[i+14]) ^ ord('n') ^ ord('d'))
+    send_data[i+15] = chr(ord(send_data[i+15]) ^ ord('c') ^ ord('5'))
+    send_data = b64encode(''.join(send_data))
+    print '>>>', send_data
+    s.send(send_data+'\n')
+    dungeon = s.recv(1024)
+    print dungeon
+    if 'Dungeon goes' in dungeon:
+        break
+    elif 'gonna ask' in dungeon:
+        count += 1
+    print s.recv(1024)
+
+assert count == 0
+enc_mod_flag = b64decode(enc_mod_flag)
+```
+
+Once we've passed the first part, we know that the first block of "mod_flag"
+is the fixed string "send_modflag_enc". The second part, or "next_level",
+of the challenge takes an input buffer, decrypts it, takes the MD5 hash,
+and returns the result. The trick here is that the padding is not strictly
+checked so that whatever the last byte of the decrypted data is, that
+many bytes will be used as the "plaintext" bytes and only hash those.
+This means, if we can get a particular value in the last byte of the
+decrypted data, then we might be able to get the server to hash the first
+N bytes of the flag, and return that value. Again, we can pick off one
+byte of the flag at a time by guessing enough cipher texts, and if
+one of them matches our currently known string + another byte, then we
+know that byte is the next character in the flag.
+
+To accomplish this, I added a random block to the end of the ciphertext
+and submitted that to the server. This was done several times, and when one
+MD5 response matched a set of partial flag values, I knew the response
+was valid and filled in another bit of the flag. The script to do this
+along with the beginning and end of the process are shown below.
+
+```python
+known = 'send_modflag_enc'
+
+known_extended = True
+while known_extended:
+    letter_hashes = {}
+    for _ch in range(256):
+        ch = chr(_ch)
+        dig = b64encode(md5(known+ch).digest())
+        letter_hashes[dig] = known+ch
+
+    known_extended = False
+    for ch in range(1024):
+        send_data = enc_mod_flag + 'A'*14 + chr(ch/256) + chr(ch%256)
+        #print '>>', b64encode(send_data)
+        s.send(b64encode(send_data)+'\n')
+        recv_data = s.recv(1024).strip()
+        assert len(letter_hashes.items()[0][0]) == len(recv_data)
+        if recv_data in letter_hashes:
+            print letter_hashes[recv_data]
+            known = letter_hashes[recv_data]
+            known_extended = True
+            break
+```
+
+![Solution Start](images/locked_dungeon2_solution_start.png)
+
+![Solution End](images/locked_dungeon2_solution_end.png)
+
 ## CRYPTO - Pagoda 1
 
 ![Description](images/pagoda1_description.png)
