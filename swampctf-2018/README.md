@@ -159,6 +159,31 @@ output (as shown below).
 ![Constants](images/pilgrim_constants.png)
 ![Testing constants](images/pilgrim_testing.png)
 
+Looking a little closer at the constants found above, they are used exclusively
+in the `Network::defaultWeights()` initialization function. A snippet of this
+function is shown below and shows that first, four 0.0 double values are used
+to initialize some sort of array with the function calls:
+
+```
+Eigen::DenseCoeffsBase<Eigen::Matrix<Layer,1,-1,1,1,-1>,1>::operator()(long)
+Eigen::DenseBase<Eigen::Matrix<double,-1,1,0,-1,1>>::operator<<(double const&)
+Eigen::CommaInitializer<Eigen::Matrix<double,-1,1,0,-1,1>>::operator,(double const&)
+Eigen::CommaInitializer<Eigen::Matrix<double,-1,1,0,-1,1>>::operator,(double const&)
+Eigen::CommaInitializer<Eigen::Matrix<double,-1,1,0,-1,1>>::operator,(double const&)
+Eigen::CommaInitializer<Eigen::Matrix<double,-1,1,0,-1,1>>::~CommaInitializer()
+```
+
+This is followed by the same calls with our four constant values.
+This all looks like C++ to me, and was likely initilized with two lines of codes
+like:
+
+```
+Eigen::DenseCoeffsBase(0) << 0.0, 0.0, 0.0, 0.0;
+Eigen::DenseCoeffsBase(1) << -0.9395, -0.363, -1.231, -1.658;
+```
+
+![Array Decompilation](images/pilgrim_constant_defaults.png]())
+
 With a little trial and error, I found that each bias value contributed
 to one letter of the "speak" text. Getting these to spell out flag revealed
 the answer below.
