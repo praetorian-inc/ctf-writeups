@@ -182,7 +182,7 @@ Eigen::DenseCoeffsBase(0) << 0.0, 0.0, 0.0, 0.0;
 Eigen::DenseCoeffsBase(1) << -0.9395, -0.363, -1.231, -1.658;
 ```
 
-![Array Decompilation](images/pilgrim_constant_defaults.png]())
+![Array Decompilation](images/pilgrim_constant_defaults.png)
 
 With a little trial and error, I found that each bias value contributed
 to one letter of the "speak" text. Getting these to spell out flag revealed
@@ -305,6 +305,67 @@ f.close()
 ## CRYPTO - Orb of Light 1: Secret
 
 ## CRYPTO - Locked Dungeon
+
+![Description](images/locked_dungeon_description.png)
+
+For this problem, a python script was provided [saved here](files/enter_the_dungeon1.py).
+Immediately this problem looked like some sort of padding oracle, so
+first I decided to try sending 'A' bytes of varying lengths and observing
+the results. This showed some interesting results as seen below.
+
+```python
+import socket
+
+s = socket.create_connection(('chal1.swampctf.com',1450))
+s.settimeout(1)
+
+for i in range(0x64):
+    s.send(b'A'*i + b'\n')
+    print(i, s.recv(1024).decode('ascii').strip())
+```
+
+![As test](images/locked_dungeon_a_test.png)
+
+Using some trial and error, I tried to replicate the same response
+lengths and block stucture. This found that a flag of length 43 was
+used as seen below.
+
+```python
+import binascii
+
+aescipher = AESCipher(key=KEY)
+flag = 'flag{asdfasdfasdfasdfasdfasdfasdfasdfasdfa}'
+flag_size = len(flag)
+for i in range(0x64):
+    print(i, binascii.hexlify(aescipher.mod_pad(flag + 'A'*i, flag_size).encode('ascii')))
+```
+
+![Flag size found](images/locked_dungeon_flag_size.png)
+
+Finally, using this technique of padding with A's we can pick off
+one byte of the flag at a time. This is done by creating a baseline
+response with the next byte (flag recovered so far + 1 + 'A' padding).
+Next, we attempt to send each potential next character and compare the
+result with our baseline request. If they match then we know we've
+guessed the right character. A python script to perform this test
+against the server with the output is shown below.
+
+```
+crib = b'flag{'
+
+for i in range(100):
+    print(crib)
+    s.send(b'A'*(47-len(crib))+b'\n')
+    baseline = s.recv(1024).decode('ascii').strip()
+    for ch in b'abcdefghijklmnopqrstuvwxyz{}0123456789_-.ABCDEFGHIJKLMNOPQRSTUVWXYZ?':
+        s.send(crib + bytes([ch]) + b'A'*(48-len(crib))+b'\n')
+        msg = s.recv(1024).decode('ascii').strip()
+        if msg == baseline:
+            crib = crib + bytes([ch])
+            break
+```
+
+![Solution](images/locked_dungeon_solution.png)
 
 ## CRYPTO - Locked Dungeon 2
 
