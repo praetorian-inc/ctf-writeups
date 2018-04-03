@@ -2,6 +2,26 @@
 
 [https://play.swampctf.com/](https://play.swampctf.com/)
 
+Solved Problems:
+* [REV - Dragon's Horde](#REV - Dragon's Horde)
+* [REV - Journey](#REV - Journey)
+* [REV - Window of Opportunity](#REV - Window of Opportunity)
+* [REV - Pilgrim](#REV - Pilgrim)
+* [REV - Chicken Chaser](#REV - Chicken Chaser)
+* [MISC - Secret Plans](#MISC - Secret Plans)
+* [MISC - ICastBash](#MISC - ICastBash)
+* [MISC - Orb of Light 2: Save Cormyr](#MISC - Orb of Light 2: Save Cormyr)
+* [MISC - Orb of Light 3: Disjunction](#MISC - Orb of Light 3: Disjunction)
+* [CRYPTO - Orb of Light 1: Secret](#CRYPTO - Orb of Light 1: Secret)
+* [CRYPTO - Locked Dungeon](#CRYPTO - Locked Dungeon)
+* [CRYPTO - Locked Dungeon 2](#CRYPTO - Locked Dungeon 2)
+* [CRYPTO - Pagoda 1](#CRYPTO - Pagoda 1)
+* [CRYPTO - Pagoda 2](#CRYPTO - Pagoda 2)
+* [CRYPTO - Pagoda 3](#CRYPTO - Pagoda 3)
+* [FORENSIC - Wild Night Out](#FORENSIC - Wild Night Out)
+* [FORENSIC - Orcish](#FORENSIC - Orcish)
+* [PWN - Apprentice's Return](#PWN - Apprentice's Return)
+
 ## REV - Dragon's Horde
 
 ## REV - Journey
@@ -267,7 +287,7 @@ f.close()
 
 ![Description](images/pagoda1_description.png)
 
-[Hexagram output](files/files/pagoda/text1.htm)
+[Hexagram output](files/pagoda/text1.htm)
 
 This problem centered involved decoding a bunch of dash and space characters
 (shown in the link above). Someone in our group suggested that this could
