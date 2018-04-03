@@ -205,7 +205,8 @@ filename and combining them into one image showed a picture with the flag in it.
 The most time consuming part of this problem was taking all the individual 
 images and combining them into one. There might have been a better way to do this,
 but I decided to use the python png library. The script and resulting combined
-image are shown below.
+image are shown below. The flag is in the image, and you might need to adjust
+your brightness or resolution to see it.
 
 ```python
 import png
@@ -264,9 +265,164 @@ f.close()
 
 ## CRYPTO - Pagoda 1
 
+![Description](images/pagoda1_description.png)
+
+[Hexagram output](files/files/pagoda/text1.htm)
+
+This problem centered involved decoding a bunch of dash and space characters
+(shown in the link above). Someone in our group suggested that this could
+be a Hexagram cipher. After searching around for cipher, we found a mapping
+from hexagrams to integer values [here](https://en.wikipedia.org/wiki/List_of_hexagrams_of_the_I_Ching).
+Converting each glyph to six bits and then combining those into bytes (similar
+to base64) revealed the answer.
+
+```python
+arrs = []
+arrs_h = []
+h = {' ':0,'-':1}
+for line in open('text1.txt'):
+    print(line[6::12])
+    arrs.append([h[ch] for ch in line[6::12]])
+    arrs_h.append([ch for ch in line[6::12]])
+
+cnt = []
+cnt_h = []
+for j in range(len(arrs[0])):
+    cnt.append(sum([(arrs[i][j]<<(5-i)) for i in range(6)]))
+    cnt_h.append(''.join(arrs_h[i][j] for i in range(6)))
+
+hexagram_lookup = '''------
+      
+ -   -
+-   - 
+ - ---
+--- - 
+    - 
+ -    
+-- ---
+--- --
+   ---
+---   
+---- -
+- ----
+   -  
+  -   
+ --  -
+-  -- 
+    --
+--    
+- -  -
+-  - -
+-     
+     -
+---  -
+-  ---
+-    -
+ ---- 
+ -  - 
+- -- -
+ ---  
+  --- 
+----  
+  ----
+- -   
+   - -
+-- - -
+- - --
+ - -  
+  - - 
+-   --
+--   -
+ -----
+----- 
+ --   
+   -- 
+ -- - 
+ - -- 
+ --- -
+- --- 
+  -  -
+-  -  
+-- -  
+  - --
+  -- -
+- --  
+-- -- 
+ -- --
+--  - 
+ -  --
+--  --
+  --  
+ - - -
+- - - '''
+
+hexagram = {}
+for i,h in enumerate(hexagram_lookup.split('\n')):
+    hexagram[h] = i
+
+b64alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+ints = [hexagram[h] for h in cnt_h] # text1
+print base64.b64decode(''.join(b64alph[c] for c in ints))
+```
+
 ## CRYPTO - Pagoda 2
 
+![Description](images/pagoda2_description.png)
+
+This problem was nearly identical to Pagoda 1. The clue for this one
+suggested "reflection" in several spaces, so you guessed it - just
+invert each pattern top-to-bottom. The same script as above was used
+with the last `ints` line replaced:
+
+```python
+ints = [hexagram[''.join(reversed([x for x in h]))] for h in cnt_h] # text2
+```
+
 ## CRYPTO - Pagoda 3
+
+![Description](images/pagoda3_description.png)
+
+Finally, the last pagoda hint suggested that "trigrams" were used. After
+googling around for a while, a trigram mapping was found. Each glyph in
+this problem represented two 3-bit values, which could be combined as before.
+The solutions to all three pagoda problems are shown below.
+
+```python
+import base64
+
+arrs = []
+arrs_h = []
+h = {' ':0,'-':1}
+for line in open('text3.txt'):
+    print(line[6::12])
+    arrs.append([h[ch] for ch in line[6::12]])
+    arrs_h.append([ch for ch in line[6::12]])
+
+cnt = []
+cnt_h = []
+for j in range(len(arrs[0])):
+    cnt.append(sum([(arrs[i][j]<<(5-i)) for i in range(6)]))
+    cnt_h.append(''.join(arrs_h[i][j] for i in range(6)))
+
+trigram_lookup = '''---
+ --
+- -
+  -
+-- 
+ - 
+-  
+   '''
+
+trigram = {}
+for i,h in enumerate(trigram_lookup.split('\n')):
+    trigram[h] = i
+
+b64alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+ints = [((trigram[h[0:3]]<<0)+(trigram[h[3:6]]<<3))^0x3f for h in cnt_h] # text3
+print base64.b64decode(''.join(b64alph[c] for c in ints))
+```
+
+![Pagoda Solution](images/pagoda_solution_all.png)
 
 ## FORENSIC - Wild Night Out
 
